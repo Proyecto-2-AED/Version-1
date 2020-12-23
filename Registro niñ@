@@ -3,14 +3,11 @@
 #include <stdlib.h>
 
 //-----------------------ESTRUCTURAS------------------------------
+//---------REGISTRO NIÑ@------------------
 
 typedef struct ListaR ListaRegistro;
 typedef struct NodoR NodoR;
 
-typedef struct ListaA ListaAyudante;
-typedef struct NodoA NodoR;
-
-//---------REGISTRO NIÑ@------------------
 struct NodoR
 {
   int identificacion;
@@ -33,8 +30,10 @@ struct ListaR
 };
 
 
-
 //---------REGISTRO AYUDANTE------------------
+typedef struct ListaA ListaAyudante;
+typedef struct NodoA NodoR;
+
 struct NodoA
 {
   int identificacion;
@@ -53,3 +52,23 @@ struct ListaA
 	Nodo *final;
 };
 
+
+//---------REGISTRO DE JUGUETES---------
+typedef struct nodoJu nodoJu;
+
+struct nodoJu {
+    int codigo;
+    char nombre[50];
+    char descripcion[100];
+    char categoria[100];
+    int rangoI;
+    int rangoF;
+    int costo_total;
+  
+    
+    struct nodo *izq;
+    struct nodo *der;
+};
+
+//Definicion de raiz de arbol
+nodoJu *raiz=NULL;
