@@ -5,11 +5,15 @@
 //-----------------------ESTRUCTURAS------------------------------
 
 typedef struct ListaR ListaRegistro;
-typedef struct NodoR Nodo;
+typedef struct NodoR NodoR;
 
+typedef struct ListaA ListaAyudante;
+typedef struct NodoA NodoR;
+
+//---------REGISTRO NIÑ@------------------
 struct NodoR
 {
-	int identificacion;
+  int identificacion;
   char nombre[50];
   char N_usuario[50];
   char lugar[50];
@@ -27,3 +31,25 @@ struct ListaR
 	Nodo *inicio;
 	Nodo *final;
 };
+
+
+
+//---------REGISTRO NAYUDANTE------------------
+struct NodoA
+{
+  int identificacion;
+  char nombre[50];
+  char puesto[50];
+  char funcion[50];
+  char fecha_inicio[15];
+  
+	Nodo *siguiente;
+	Nodo *anterior; 
+};
+
+struct ListaA
+{
+	Nodo *inicio;
+	Nodo *final;
+};
+
