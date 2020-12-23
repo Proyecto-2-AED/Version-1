@@ -53,7 +53,7 @@ struct ListaA
 };
 
 
-//---------REGISTRO DE JUGUETES---------
+//---------REGISTRO DE JUGUETES----------
 typedef struct nodoJu nodoJu;
 
 struct nodoJu {
