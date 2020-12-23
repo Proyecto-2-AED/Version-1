@@ -1,2 +1,29 @@
-//REGISTRO DE NIÑOS
-// Hola mundo
+//------------------------LIBRERIAS-------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+
+//-----------------------ESTRUCTURAS------------------------------
+
+typedef struct ListaR ListaRegistro;
+typedef struct NodoR Nodo;
+
+struct NodoR
+{
+	int identificacion;
+  char nombre[50];
+  char N_usuario[50];
+  char lugar[50];
+  char correo[50];
+  char fecha_nacimiento[15];
+  int edad;
+  char necesidades_especiales[100];
+  
+	Nodo *siguiente;
+	Nodo *anterior; 
+};
+
+struct ListaR
+{
+	Nodo *inicio;
+	Nodo *final;
+};
