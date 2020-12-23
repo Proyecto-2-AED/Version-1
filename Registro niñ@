@@ -34,7 +34,7 @@ struct ListaR
 
 
 
-//---------REGISTRO NAYUDANTE------------------
+//---------REGISTRO AYUDANTE------------------
 struct NodoA
 {
   int identificacion;
