@@ -1,11 +1,11 @@
 //------------------------LIBRERIAS-------------------------------
-#include <stdio.h>
-#include <stdlib.h>
-
+#include <stdio.h> //entrada y salida de datos
+#include <stdlib.h> //gestion de memoria
+#include <string.h>  //manipulacion de strings
 //-----------------------ESTRUCTURAS------------------------------
 //---------REGISTRO NIÑ@------------------
 
-typedef struct ListaR ListaRegistro;
+typedef struct ListaR ListaR;
 typedef struct NodoR NodoR;
 
 struct NodoR
@@ -19,20 +19,20 @@ struct NodoR
   int edad;
   char necesidades_especiales[100];
   
-	Nodo *siguiente;
-	Nodo *anterior; 
+	NodoR *siguiente;
+	NodoR *anterior; 
 };
 
 struct ListaR
 {
-	Nodo *inicio;
-	Nodo *final;
+	NodoR *inicio;
+	NodoR *final;
 };
 
 
 //---------REGISTRO AYUDANTE------------------
 typedef struct ListaA ListaAyudante;
-typedef struct NodoA NodoR;
+typedef struct NodoA NodoA;
 
 struct NodoA
 {
@@ -42,14 +42,14 @@ struct NodoA
   char funcion[50];
   char fecha_inicio[15];
   
-	Nodo *siguiente;
-	Nodo *anterior; 
+	NodoA *siguiente;
+	NodoA *anterior; 
 };
 
 struct ListaA
 {
-	Nodo *inicio;
-	Nodo *final;
+	NodoA *inicio;
+	NodoA *final;
 };
 
 
@@ -72,3 +72,215 @@ struct nodoJu {
 
 //Definicion de raiz de arbol
 nodoJu *raiz=NULL;
+
+
+
+//-----------------TODO SOBRE REGISTRO DEL NIN@-------------
+//CREACION DE LA LISTA DOBLE PARA REGISTRO DEL NIN@
+
+ListaR *listaNueva(void)
+{
+	ListaR *L;
+	L = (ListaR *) malloc(sizeof(ListaR));
+	L->inicio = NULL;
+	L->final = NULL;
+	return L;
+}
+
+//CREACION DEL NODO PARA LISTA DOBLE REGISTRO DEL NIN@
+NodoR* crearNodo(int identificacion, char nombre[],char N_usuario[], char lugar[], char correo[], char fecha_nacimiento[],int edad,char necesidades_especiales[])
+{
+	NodoR *nuevo;
+	nuevo = (NodoR *) malloc(sizeof(NodoR));
+	nuevo->anterior = NULL;
+	nuevo->siguiente = NULL;
+	
+	nuevo->identificacion = identificacion;	
+	strcpy(nuevo->nombre,nombre);
+	strcpy(nuevo->N_usuario,N_usuario);
+	strcpy(nuevo->lugar,lugar);
+	strcpy(nuevo->correo,correo);
+	strcpy(nuevo->fecha_nacimiento,fecha_nacimiento);
+	nuevo->edad = edad;	
+	strcpy(nuevo->necesidades_especiales,necesidades_especiales);
+	
+	return nuevo;
+}
+
+//INSERTAR DATOS EN LA LISTA DOBLE REGISTRO DEL NIN@
+
+void insertarNino(ListaR *L, int identificacion, char nombre[],char N_usuario[], char lugar[], char correo[], char fecha_nacimiento[],int edad,char necesidades_especiales[])
+{
+	if(L->inicio == NULL) //Valida si la lista est? vac?a
+	{
+		//Inserta al inicio de la lista
+		L->inicio = crearNodo(identificacion,nombre,N_usuario,lugar,correo,fecha_nacimiento,edad,necesidades_especiales);
+		L->final = L->inicio;
+		return;
+	}
+	
+	//Inserta el dato al final de la lista, no necesita un ciclo porque tiene el puntero final
+	L->final->siguiente = crearNodo(identificacion,nombre,N_usuario,lugar,correo,fecha_nacimiento,edad,necesidades_especiales);
+	L->final->siguiente->anterior = L->final;
+	L->final = L->final->siguiente;
+}
+
+
+//MOSTRAR LISTA DOBLE REGISTRO DEL NIN@
+void mostrarListaIzqDer(const ListaR *L)
+{
+	NodoR *i;
+	printf("LISTA DE REGISTROS DE NINOS Y NINAS: \n");
+	for(i = L->inicio; i!= NULL; i = i->siguiente)
+		printf("%d /n", i->identificacion);
+		printf("%s /n", i->nombre);
+		printf("%s /n", i->N_usuario);
+		printf("%s /n", i->lugar);
+		printf("%s /n", i->correo);
+		printf("%s /n", i->fecha_nacimiento);
+		printf("%d /n", i->edad);
+		printf("%s /n", i->necesidades_especiales);
+		
+	printf("\n");
+}
+
+//ELIMINAR NIN@ DE LA LISTA DOBLE 
+
+void eliminarNino(ListaR *L, int identificacion)
+{
+	NodoR *aux = L->inicio;
+	
+	//Valida si la lista esta vacia
+	if(L->inicio == NULL)
+	{
+		printf("La lista esta vacia...\n");		
+	}
+	else
+	{
+		//Si el nodo a eliminar esta al inicio de la lista
+		if(L->inicio->identificacion == identificacion)
+		{
+			if(L->inicio == L->final) //Valida si la lista tiene solo un nodo para actualizar el puntero final
+				L->final = NULL;
+			L->inicio = L->inicio->siguiente;
+			L->inicio->anterior = NULL;				
+		}
+		else 
+		{
+			while(aux != NULL)
+			{
+				if(aux->identificacion == identificacion){
+					aux->anterior->siguiente = aux->siguiente;
+					if(aux != L->final)
+						aux->siguiente->anterior = aux->anterior;
+					else if(aux == L->final) //Valida si era el ultimo nodo de la lista para actualizar el puntero final
+						L->final = L->final->anterior;					
+					break;
+				}
+				aux = aux->siguiente;					
+			}
+			
+		}
+		if(aux != NULL)
+		{
+			printf("El dato eliminado es %d \n", aux->identificacion);
+			free(aux);
+		}
+	}
+}
+
+//VERIFICAR NINO REPETIDO Y EXISTE
+
+int repetir_nino(ListaR *L, int identificacion)
+{
+	NodoR *nAux = L->inicio;
+	
+	while(nAux != NULL)
+	{
+		if(nAux->identificacion == identificacion)
+			return 1;
+		nAux = nAux->siguiente;		
+	}
+	return 0;
+	
+}
+
+
+
+// MODIFICAR INFORMACION DE LISTA DOBLE REGISTRO NINO
+
+void ModificarNino(ListaR *L, char identificador[], char opcion[]){
+
+    NodoR *aux = L->inicio;
+    int ok = 0;
+	int resultado;
+    char nuevolugar[50],nueva_nece[100],nuevo_usuario[50];
+
+
+    while(aux != NULL && !ok)
+        {
+            if(aux->identificacion == identificador)
+            {ok = 1;
+			break;
+			}
+            else
+            {aux=aux->siguiente;}
+        }    
+
+    if(ok)
+    {
+        printf("\nEL NIÑ@ CON IDENTIFICADOR %s SI ESTA REGISTRADO \n\n", identificador);
+        if (strcmp(opcion,"1")==0){
+            printf("Digite el nuevo lugar de residencia \n\n");
+            gets(nuevolugar);
+            strcpy(aux->lugar,nuevolugar);
+            
+            printf("EL CAMBIO SE REALIZO CON EXITO \n\n");
+            printf("NOMBRE:%s \n",aux->nombre);
+            printf("IDENTIFICADOR :%s \n",aux->identificacion);
+			printf("NUEVO LUGAR DE RESIDENCIA :%s \n",aux->	lugar);
+			}
+			
+		else if (strcmp(opcion,"2")==0){
+            printf("Digite las nuevas necesidades del niño o niña \n\n");
+            gets(nueva_nece);
+            strcpy(aux->necesidades_especiales,nueva_nece);
+            printf("EL CAMBIO SE REALIZO CON EXITO \n\n");
+            printf("NOMBRE:%s \n",aux->nombre);
+            printf("IDENTIFICADOR :%s \n",aux->identificacion);
+			printf("NUEVAS NECESIDADES ESPECIALES :%s \n",aux->necesidades_especiales);
+			}
+			
+		else if (strcmp(opcion,"3")==0){
+            printf("Digite el nuevo nombre de usuario \n\n");
+            gets(nuevo_usuario);
+            strcpy(aux->N_usuario,nuevo_usuario);
+            printf("EL CAMBIO SE REALIZO CON EXITO \n\n");
+			printf("NOMBRE:%s \n",aux->nombre);
+            printf("IDENTIFICADOR :%s \n",aux->identificacion);
+			printf("NUEVO NOMBRE DE USUARIO :%s \n",aux->N_usuario);
+			}
+			
+		else
+   		 {printf("\nEL NIÑ@ CON IDENTIFICADOR %s NO ESTA REGISTRADO \n\n", identificador);}
+   		 
+   }
+
+}
+
+int main(void)
+{
+	ListaR *L;
+	L = listaNueva();
+	
+	insertarNino(L,504390817,"Paola Lopez Mendez","Farolayn","Hojancha","farolayn@gmail.com","01/09/2001",19,"Alergica al polvo");
+	
+	mostrarListaIzqDer(L);
+	
+	printf("\n****  PRUEBA ELIMINAR DATO   ****\n");
+//	eliminarNino(L,4);
+	mostrarListaIzqDer(L);
+	
+//	liberarLista(L);
+}
+
