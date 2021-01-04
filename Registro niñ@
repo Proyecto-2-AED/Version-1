@@ -130,19 +130,23 @@ void insertarNino(ListaR *L, int identificacion, char nombre[],char N_usuario[],
 void mostrarListaIzqDer(const ListaR *L)
 {
 	NodoR *i;
-	printf("LISTA DE REGISTROS DE NINOS Y NINAS: \n");
-	for(i = L->inicio; i!= NULL; i = i->siguiente)
-		printf("%d /n", i->identificacion);
-		printf("%s /n", i->nombre);
-		printf("%s /n", i->N_usuario);
-		printf("%s /n", i->lugar);
-		printf("%s /n", i->correo);
-		printf("%s /n", i->fecha_nacimiento);
-		printf("%d /n", i->edad);
-		printf("%s /n", i->necesidades_especiales);
-		
+	printf("____________________________________________________________________________\n");
+	printf("LISTA DE REGISTROS DE NINOS Y NINAS: \n\n");
+	for(i = L->inicio; i!= NULL; i = i->siguiente){
+	
+		printf("IDENTIFICACION: %d \n", i->identificacion);
+		printf("NOMBRE: %s \n", i->nombre);
+		printf("NOMBRE USUARIO: %s \n", i->N_usuario);
+		printf("LUGAR DE RESIDENCIA: %s \n", i->lugar);
+		printf("CORREO: %s \n", i->correo);
+		printf("FECHA DE NACIMIENTO: %s \n", i->fecha_nacimiento);
+		printf("EDAD: %d \n", i->edad);
+		printf("NECESIDADES ESPECIALES: %s \n\n\n", i->necesidades_especiales);
+		}
+	printf("____________________________________________________________________________\n");
 	printf("\n");
 }
+
 
 //ELIMINAR NIN@ DE LA LISTA DOBLE 
 
@@ -157,14 +161,25 @@ void eliminarNino(ListaR *L, int identificacion)
 	}
 	else
 	{
-		//Si el nodo a eliminar esta al inicio de la lista
+//Si el nodo a eliminar esta al inicio de la lista
 		if(L->inicio->identificacion == identificacion)
 		{
-			if(L->inicio == L->final) //Valida si la lista tiene solo un nodo para actualizar el puntero final
-				L->final = NULL;
-			L->inicio = L->inicio->siguiente;
-			L->inicio->anterior = NULL;				
+		aux = L->inicio;
+		printf("El nino con identificacion %d ha sido eliminado \n", aux->identificacion);
+		
+		if(L->inicio == L->final) //Verifica si la lista solo ten?a un nodo para actualizar el puntero final
+		{
+			L->inicio = NULL;
+			L->final = NULL;
 		}
+		else{
+			L->inicio = L->inicio->siguiente;
+			L->inicio->anterior = NULL;	
+		}		
+		free(aux);
+
+		}
+	//-----------------------------	
 		else 
 		{
 			while(aux != NULL)
@@ -180,13 +195,14 @@ void eliminarNino(ListaR *L, int identificacion)
 				aux = aux->siguiente;					
 			}
 			
-		}
+		
 		if(aux != NULL)
 		{
-			printf("El dato eliminado es %d \n", aux->identificacion);
+			printf("El nino con identificacion %d ha sido eliminado \n", aux->identificacion);
 			free(aux);
 		}
 	}
+}
 }
 
 //VERIFICAR NINO REPETIDO Y EXISTE
@@ -198,27 +214,26 @@ int repetir_nino(ListaR *L, int identificacion)
 	while(nAux != NULL)
 	{
 		if(nAux->identificacion == identificacion)
-			return 1;
+			return -1;
 		nAux = nAux->siguiente;		
 	}
-	return 0;
 	
 }
 
 
 
+
 // MODIFICAR INFORMACION DE LISTA DOBLE REGISTRO NINO
 
-void ModificarNino(ListaR *L, char identificador[], char opcion[]){
+void ModificarNino(ListaR *L, int identificador, int opcion){
 
     NodoR *aux = L->inicio;
     int ok = 0;
 	int resultado;
     char nuevolugar[50],nueva_nece[100],nuevo_usuario[50];
 
-
     while(aux != NULL && !ok)
-        {
+        {   
             if(aux->identificacion == identificador)
             {ok = 1;
 			break;
@@ -229,58 +244,153 @@ void ModificarNino(ListaR *L, char identificador[], char opcion[]){
 
     if(ok)
     {
-        printf("\nEL NIÑ@ CON IDENTIFICADOR %s SI ESTA REGISTRADO \n\n", identificador);
-        if (strcmp(opcion,"1")==0){
+        printf("\nEL NIÑ@ CON IDENTIFICADOR %d SI ESTA REGISTRADO \n\n", identificador);
+        if (opcion == 1){
             printf("Digite el nuevo lugar de residencia \n\n");
             gets(nuevolugar);
             strcpy(aux->lugar,nuevolugar);
             
             printf("EL CAMBIO SE REALIZO CON EXITO \n\n");
             printf("NOMBRE:%s \n",aux->nombre);
-            printf("IDENTIFICADOR :%s \n",aux->identificacion);
+            printf("IDENTIFICADOR :%d \n",aux->identificacion);
 			printf("NUEVO LUGAR DE RESIDENCIA :%s \n",aux->	lugar);
 			}
 			
-		else if (strcmp(opcion,"2")==0){
+		else if (opcion == 2){
             printf("Digite las nuevas necesidades del niño o niña \n\n");
             gets(nueva_nece);
             strcpy(aux->necesidades_especiales,nueva_nece);
             printf("EL CAMBIO SE REALIZO CON EXITO \n\n");
             printf("NOMBRE:%s \n",aux->nombre);
-            printf("IDENTIFICADOR :%s \n",aux->identificacion);
+            printf("IDENTIFICADOR :%d \n",aux->identificacion);
 			printf("NUEVAS NECESIDADES ESPECIALES :%s \n",aux->necesidades_especiales);
 			}
 			
-		else if (strcmp(opcion,"3")==0){
+		else if (opcion == 3){
             printf("Digite el nuevo nombre de usuario \n\n");
             gets(nuevo_usuario);
             strcpy(aux->N_usuario,nuevo_usuario);
             printf("EL CAMBIO SE REALIZO CON EXITO \n\n");
 			printf("NOMBRE:%s \n",aux->nombre);
-            printf("IDENTIFICADOR :%s \n",aux->identificacion);
+            printf("IDENTIFICADOR :%d \n",aux->identificacion);
 			printf("NUEVO NOMBRE DE USUARIO :%s \n",aux->N_usuario);
 			}
-			
-		else
-   		 {printf("\nEL NIÑ@ CON IDENTIFICADOR %s NO ESTA REGISTRADO \n\n", identificador);}
    		 
    }
+   
+   else
+   		 {printf("\nEL NIÑ@ CON IDENTIFICADOR %s NO ESTA REGISTRADO \n\n", identificador);}
 
 }
 
+//------------------------------------PRINCIPAL---------------------------------------------------------
 int main(void)
 {
 	ListaR *L;
 	L = listaNueva();
 	
 	insertarNino(L,504390817,"Paola Lopez Mendez","Farolayn","Hojancha","farolayn@gmail.com","01/09/2001",19,"Alergica al polvo");
+	insertarNino(L,502598537,"Mary Cruz Lopez","Crusi","Hojancha","crmendez05@gmail.com","27/05/1998",22,"Alergica al agua");
+//	mostrarListaIzqDer(L);
+//	eliminarNino(L,502598537);
+	 menu(L);
 	
-	mostrarListaIzqDer(L);
+//
 	
-	printf("\n****  PRUEBA ELIMINAR DATO   ****\n");
-//	eliminarNino(L,4);
-	mostrarListaIzqDer(L);
+//	eliminarNino(L,504390817);
+//	mostrarListaIzqDer(L);
+
+	
+//	printf("\n****  PRUEBA ELIMINAR DATO   ****\n");
+
+//	mostrarListaIzqDer(L);
 	
 //	liberarLista(L);
 }
+	
+int menu(ListaR *L){
+	
+	//---------------------------------------MENU--------------------------------------
+	char opcion[2];
+	
+	printf("\n\n--------BIENVENIDO, QUE DESEA HACER?-------- \n\n ELIJA UN NUMERO \n\n");
+	
+	printf("1. Registro del nino o nina \n");
+	printf("2. Modificar informacion del nino o nina \n");
+	printf("3. Eliminar registro de niño o niña \n");
+	gets(opcion);	
+	
+//	--------------------------------------Agregar o registrar nino--------------------------------------
+	if (strcmp(opcion,"1")==0){
+		
+	  int identificacion;
+	  char nombre[50];
+	  char N_usuario[50];
+	  char lugar[50];
+	  char correo[50];
+	  char fecha_nacimiento[15];
+	  int edad;
+	  char necesidades_especiales[100];
+		
+            printf("Digite el nombre completo del niño o niña \n\n");
+            gets(nombre);
+		    
+            printf("Digite la identificacion de %s \n\n",nombre);
+            scanf("%d",&identificacion);
+		    getchar(); //borrar basura
+			
+			if (repetir_nino(L,identificacion) == -1)
+            	{
+				printf("\nEste numero de identificacion ya pertenece a un nino, vuelva a intentar el proceso\n");
+				return menu(L);
+				}    
+		
+		    
+            printf("Digite nombre de usuario de %s \n\n",nombre);
+            gets(N_usuario);
+            printf("Digite lugar de procedencia de de %s \n\n",nombre);  //ACA HAY QUE METER RESTRICCION DE QUE ESTE REGISTRADO EN EL CATALOGO
+            gets(lugar);
+            printf("Digite el correo de %s \n\n",nombre);
+            gets(correo);
+            printf("Digite la fecha de nacimiento de %s   --FORMATO 04/01/2021-- \n\n",nombre);
+            gets(fecha_nacimiento);
+            printf("Digite la edad de %s \n\n",nombre);
+            scanf("%d",&edad);
+		    getchar(); //borrar basura
+		    printf("Digite las necesidades especiales del nino o nina \n\n",nombre);
+            gets(necesidades_especiales);
+            
+            insertarNino(L,identificacion,nombre,N_usuario,lugar,correo,fecha_nacimiento,edad,necesidades_especiales);
+            
+           	mostrarListaIzqDer(L);
+           	return menu(L);
+        }
+//	--------------------------------------Modificar informacion del nino--------------------------------------      
+       if (strcmp(opcion,"2")==0){
+       	int identificacion, opcion;
+		
+		printf("\nQue numero de identificador tiene el nino que desea modificar \n\n");
+ 			scanf("%d",&identificacion);
+		    getchar(); //borrar basura
+		    
+		printf("\nQue informacion desea modificar del nino o nina. Elija un numero \n\n");
+		printf(" 1. Lugar de procedencia \n 2. Necesidades Especiales \n 3. Nombre de usuario \n\n");
+         	scanf("%d",&opcion);
+		    getchar(); //borrar basura;
+            
+        	ModificarNino(L,identificacion,opcion);
 
+    }
+//	--------------------------------------Eliminar registro del nino--------------------------------------    
+    if (strcmp(opcion,"3")==0){
+    	int identificacion;
+		
+		printf("\nQue numero de identificador tiene el nino que desea eliminar \n\n");
+ 			scanf("%d",&identificacion);
+		    getchar(); //borrar basura   
+            eliminarNino(L,identificacion);
+
+    }
+        return 0;
+}
+        					
