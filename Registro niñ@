@@ -2,6 +2,8 @@
 #include <stdio.h> //entrada y salida de datos
 #include <stdlib.h> //gestion de memoria
 #include <string.h>  //manipulacion de strings
+
+
 //-----------------------ESTRUCTURAS------------------------------
 //---------REGISTRO NIÑ@------------------
 
@@ -53,10 +55,11 @@ struct ListaA
 };
 
 
-//---------REGISTRO DE JUGUETES----------
-typedef struct nodoJu nodoJu;
+//---REGISTRO DE JUGUETES, ARBOL BINARIO-------
 
-struct nodoJu {
+typedef struct nodoArbol nodoArbol;
+
+struct nodoArbol{
     int codigo;
     char nombre[50];
     char descripcion[100];
@@ -64,18 +67,41 @@ struct nodoJu {
     int rangoI;
     int rangoF;
     int costo_total;
-  
     
-    struct nodo *izq;
-    struct nodo *der;
+  struct _nodo *der;
+  struct _nodo *izq;
 };
 
 //Definicion de raiz de arbol
-nodoJu *raiz=NULL;
+nodoArbol *raiz=NULL;
 
+//---------REGISTRO DE COMPORTAMIENTO------------------
 
+typedef struct ListaC ListaC;
+typedef struct NodoC NodoC;
 
-//-----------------TODO SOBRE REGISTRO DEL NIN@-------------
+struct NodoC
+{
+  int IDnino;
+  char nombrePadre[50];
+  char nombreMadre[50];
+  char Des_comportamiento[100];
+  char fecha_Registro[15];
+  char comportamiento[15];
+  
+	NodoC *siguiente;
+	NodoC *anterior; 
+};
+
+struct ListaC
+{
+	NodoR *inicio;
+	NodoR *final;
+};
+
+//                                       TODO SOBRE REGISTRO DE NIN@S
+//-----------------------------------------------------------------------------------------------------------------
+
 //CREACION DE LA LISTA DOBLE PARA REGISTRO DEL NIN@
 
 ListaR *listaNueva(void)
@@ -282,30 +308,155 @@ void ModificarNino(ListaR *L, int identificador, int opcion){
    		 {printf("\nEL NIÑ@ CON IDENTIFICADOR %s NO ESTA REGISTRADO \n\n", identificador);}
 
 }
+//                                       TODO SOBRE COMPORTAMIENTO DEL NINO
+//-----------------------------------------------------------------------------------------------------------------
 
-//------------------------------------PRINCIPAL---------------------------------------------------------
+//CREACION DE LA LISTA DOBLE PARA COMPORTAMIENTO
+
+ListaC *listaNuevaComportamiento(void)
+{
+	ListaC *C;
+	C = (ListaC *) malloc(sizeof(ListaC));
+	C->inicio = NULL;
+	C->final = NULL;
+	return C;
+}
+
+
+//CREACION DEL NODO PARA LISTA DOBLE COMPORTAMIENTO
+NodoC* crearNodoComportamiento( int IDnino,char nombrePadre[],char nombreMadre[],char Des_comportamiento[],char fecha_Registro[],char comportamiento[])
+{
+	NodoC *nuevo;
+	nuevo = (NodoC *) malloc(sizeof(NodoC));
+	nuevo->anterior = NULL;
+	nuevo->siguiente = NULL;
+	
+	nuevo->IDnino = IDnino;	
+	strcpy(nuevo->nombrePadre,nombrePadre);
+	strcpy(nuevo->nombreMadre,nombreMadre);
+	strcpy(nuevo->Des_comportamiento,Des_comportamiento);
+	strcpy(nuevo->fecha_Registro,fecha_Registro);
+	strcpy(nuevo->comportamiento,comportamiento);
+	
+	return nuevo;
+}
+
+
+
+//INSERTAR DATOS EN LA LISTA DOBLE COMPORTAMIENTO
+
+void insertarNinoC(ListaC *C, int IDnino,char nombrePadre[],char nombreMadre[],char Des_comportamiento[],char fecha_Registro[],char comportamiento[])
+{
+	if(C->inicio == NULL) //Valida si la lista est? vac?a
+	{
+		//Inserta al inicio de la lista
+		C->inicio = crearNodoComportamiento(IDnino,nombrePadre,nombreMadre,Des_comportamiento,fecha_Registro,comportamiento);
+		C->final = C->inicio;
+		return;
+	}
+	
+	//Inserta el dato al final de la lista, no necesita un ciclo porque tiene el puntero final
+	C->final->siguiente = crearNodoComportamiento(IDnino,nombrePadre,nombreMadre,Des_comportamiento,fecha_Registro,comportamiento);
+	C->final->siguiente->anterior = C->final;
+	C->final = C->final->siguiente;
+}
+
+
+//MOSTRAR LISTA DOBLE REGISTRO DEL NIN@
+void mostrarListaComportamiento(const ListaC *C)
+{
+	NodoC *i;
+	printf("____________________________________________________________________________\n");
+	printf("LISTA DE COMPORTAMIENTOS DE NINOS Y NINAS: \n\n");
+	for(i = C->inicio; i!= NULL; i = i->siguiente){
+	
+		printf("IDENTIFICACION DEL NINO: %d \n", i->IDnino);
+		printf("NOMBRE DEL PADRE: %s \n", i->nombrePadre);
+		printf("NOMBRE DE LA MADRE: %s \n", i->nombreMadre);
+		printf("FECHA DE REGISTRO: %s \n", i->fecha_Registro);
+		printf("DESCRIPCION DEL COMPORTAMIENTO: %s \n", i->Des_comportamiento);
+		printf("COMPORTAMIENTO: %s \n\n\n", i->comportamiento);
+		}
+	printf("____________________________________________________________________________\n");
+	printf("\n");
+}
+
+
+
+//                                       TODO SOBRE REGISTRO DE JUGUETES
+//-----------------------------------------------------------------------------------------------------------------
+/*
+void insertar(char nombrex)
+{
+    nodoArbol *nuevo;
+    nuevo = malloc(sizeof(struct nodoArbol));
+    strcpy(nuevo->nombre,nombrex);
+    nuevo->izq = NULL;
+    nuevo->der = NULL;
+    if (raiz == NULL)
+        raiz = nuevo;
+    else
+    {
+        nodoArbol *anterior, *aux;
+        anterior = NULL;
+        aux = raiz;
+        while (aux != NULL)
+        {
+            anterior = aux;
+            if (strcmp(nombrex,aux->nombre) <0)
+                aux = aux->izq;
+            else
+                aux = aux->der;
+        }
+        if (strcmp(nombrex,anterior->nombre)<0)
+            anterior->izq = nuevo;
+        else
+            anterior->der = nuevo;
+    }
+}
+
+void imprimirPreorden(nodoArbol *recorrer)
+{
+    if (recorrer != NULL)
+    {
+        printf("%i --",recorrer->codigo);
+        imprimirPreorden(recorrer->izq);
+        imprimirPreorden(recorrer->der);
+    }
+}
+*/
+//                                       PRINCIPAL
+//-----------------------------------------------------------------------------------------------------------------
+
 int main(void)
 {
 	ListaR *L;
 	L = listaNueva();
 	
-	insertarNino(L,504390817,"Paola Lopez Mendez","Farolayn","Hojancha","farolayn@gmail.com","01/09/2001",19,"Alergica al polvo");
+	ListaC *C;
+	C = listaNueva();
+	
+	insertarNinoC(C,504390817,"Vicente","Meybel","Lavo los platos", "07/01/2021","bueno");
+	mostrarListaComportamiento(C);
+	
+//	insertarJuguetes(12321);
+//	menu(L);
+	
+/*	insertarNino(L,504390817,"Paola Lopez Mendez","Farolayn","Hojancha","farolayn@gmail.com","01/09/2001",19,"Alergica al polvo");
 	insertarNino(L,502598537,"Mary Cruz Lopez","Crusi","Hojancha","crmendez05@gmail.com","27/05/1998",22,"Alergica al agua");
-//	mostrarListaIzqDer(L);
-//	eliminarNino(L,502598537);
-	 menu(L);
+	mostrarListaIzqDer(L);
+	//eliminarNino(L,502598537);
 	
-//
 	
-//	eliminarNino(L,504390817);
-//	mostrarListaIzqDer(L);
 
 	
-//	printf("\n****  PRUEBA ELIMINAR DATO   ****\n");
+	eliminarNino(L,504390817);
+	mostrarListaIzqDer(L);
 
-//	mostrarListaIzqDer(L);
 	
+
 //	liberarLista(L);
+*/
 }
 	
 int menu(ListaR *L){
