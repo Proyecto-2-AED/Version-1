@@ -600,6 +600,7 @@ modificarJuguete(struct node* actual, char juguete[],char opcion[]){
 //                                       PRINCIPAL
 //-----------------------------------------------------------------------------------------------------------------
 
+
 int main(void)
 {
 	ListaR *L;
@@ -617,6 +618,10 @@ int main(void)
 }
 	
 int menu(ListaR *L,ListaC *C,struct node* root){
+	
+
+	
+	int cantidad_Juguetes = 0;
 	
 	//---------------------------------------MENU--------------------------------------
 	char opcion[2];
@@ -687,7 +692,9 @@ int menu(ListaR *L,ListaC *C,struct node* root){
             insertarNino(L,identificacion,nombre,N_usuario,lugar,correo,fecha_nacimiento,edad,necesidades_especiales);
             
            	mostrarListaIzqDer(L);
-           	return menu(L,C,root);
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
         }
 //	--------------------------------------Modificar informacion del nino--------------------------------------      
        if (strcmp(opcion,"2")==0){
@@ -703,7 +710,9 @@ int menu(ListaR *L,ListaC *C,struct node* root){
 		    getchar(); //borrar basura;
             
         	ModificarNino(L,identificacion,opcion);
-        	return menu(L,C,root);
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
     }
 //	--------------------------------------Eliminar registro del nino--------------------------------------    
     if (strcmp(opcion,"3")==0){
@@ -713,13 +722,17 @@ int menu(ListaR *L,ListaC *C,struct node* root){
  			scanf("%d",&identificacion);
 		    getchar(); //borrar basura   
             eliminarNino(L,identificacion);
-        	return menu(L,C,root);
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
 
     }
  //	--------------------------------------Mostrar lista registro del nino-------------------------------------   
     if (strcmp(opcion,"4")==0){
 		 mostrarListaIzqDer(L);
-		 return menu(L,C,root);
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);;
     }
 
 //                             ACA VA LO DE AYUDANTE DE SANTA
@@ -729,6 +742,7 @@ int menu(ListaR *L,ListaC *C,struct node* root){
 
 //--------------------------------------Agregar juguetes al arbol-------------------------------------   
 	if (strcmp(opcion,"9")==0){
+		
 		
 		int codigo;
     	char nombreJ[50];
@@ -763,7 +777,11 @@ int menu(ListaR *L,ListaC *C,struct node* root){
  		printf("____________________________________________________________________________\n");
 		inorder(root);
 		printf("\n____________________________________________________________________________\n");
-		 return menu(L,C,root);
+		 cantidad_Juguetes = cantidad_Juguetes +1;
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+		
     }
 
 //	--------------------------------------Modificar juguetes arbol--------------------------------------      
@@ -784,7 +802,9 @@ int menu(ListaR *L,ListaC *C,struct node* root){
          	gets(opcion);
             
         	modificarJuguete(root,nombre,opcion);
-        	return menu(L,C,root);
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
     }
 
 //	--------------------------------------Eliminar juguetes del arbol--------------------------------------    
@@ -795,7 +815,10 @@ int menu(ListaR *L,ListaC *C,struct node* root){
  			gets(nombre);  
             root = deleteNode(root, nombre);
             printf("\n---JUGUETE ELIMINADO---\n");
-        	return menu(L,C,root);
+        	cantidad_Juguetes = cantidad_Juguetes +1;
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
 
     }
  //--------------------------------------Mostrar lista de juguetes------------------------------------- 	
@@ -803,7 +826,9 @@ int menu(ListaR *L,ListaC *C,struct node* root){
        	printf("---------LISTA DE JUGUETES--------\n");
 		inorder(root);
 		printf("\n----------------------------------\n");
-        	return menu(L,C,root);
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
 
     }
 
@@ -848,12 +873,16 @@ int menu(ListaR *L,ListaC *C,struct node* root){
             
         insertarNinoC(C,IDnino,nombrePadre,nombreMadre,Des_comportamiento,fecha_Registro,comportamiento);
         mostrarListaComportamiento(C);
-  		return menu(L,C,root);
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
   	}
  //--------------------------------------Mostrar lista comportamiento del nino------------------------------------- 	
   	if (strcmp(opcion,"14")==0){
        mostrarListaComportamiento(C);
-        	return menu(L,C,root);
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
 
     }
 
