@@ -2,7 +2,7 @@
 #include <stdio.h> //entrada y salida de datos
 #include <stdlib.h> //gestion de memoria
 #include <string.h>  //manipulacion de strings
-
+#include <time.h> //manejo de tiempos
 
 //-----------------------ESTRUCTURAS------------------------------
 //---------REGISTRO NIÑ@------------------
@@ -94,6 +94,42 @@ struct ListaC
 	NodoC *inicio;
 	NodoC *final;
 };
+
+//---------REGISTRO DE DOMICILOS------------------
+
+typedef struct Nodo Vertice;
+typedef struct Arista Arista;
+typedef struct Lista Lista;
+
+// Estructuras del vertice de lugares
+struct Nodo{
+	char idVertice [LONG]; 
+	char nombreLugar [LONG];
+	int codPostal;
+	Vertice* sig;
+	Arista* ady; 
+	int visitado,terminado;
+	int monto;
+	char anterior[MAX];
+};
+
+// Estructuras de la arista de rutas
+struct Arista{
+	Vertice* vrt; 
+	Arista* sig;
+	char origen [LONG];
+	char destino [LONG];
+	int tiempo;
+	int distancia;
+	char tipoRuta[LONG];
+};
+
+// Estructuras de la pila para vertices en lista adyacente
+struct Lista{
+	Vertice* lugar;
+	Lista* sig;
+};
+
 
 //                                       TODO SOBRE REGISTRO DE NIN@S
 //-----------------------------------------------------------------------------------------------------------------
@@ -594,7 +630,401 @@ modificarJuguete(struct node* actual, char juguete[],char opcion[]){
 	}
 }
 	
+//                                       TODO SOBRE REGISTRO DE AYUDANTES
+//-----------------------------------------------------------------------------------------------------------------
 
+//Declara una lista doble
+
+ListaDobleAS *listaNueva(void)
+{
+	ListaDobleAS *L;
+	L = (ListaDobleAS *) malloc(sizeof(ListaDobleAS));
+	L->inicio = NULL;
+	L->final = NULL;
+	L->tamanoAS = 0; 
+	return L;
+}
+
+//Crea un nodo a una lista doble
+
+NodoAS* crearNodo( const char idAS [MAX], const char nomAS [MAX], const char puAS [MAX], const char funAS [MAX], const char fechaIAS [MAX] )
+{
+	NodoAS *nuevo;
+	nuevo = (NodoAS *) malloc(sizeof(NodoAS));
+	nuevo->anterior = NULL;
+	nuevo->siguiente = NULL;
+	strcpy (nuevo->identificacionAS, idAS);
+	strcpy (nuevo->nombreAS, nomAS);
+	strcpy (nuevo->puestoAS, puAS);
+	strcpy (nuevo->funcionesAS, funAS);
+	strcpy (nuevo->fechaInicioAS, fechaIAS);
+	return nuevo;
+}
+
+//Inserta un dato a una lista doble
+
+void insertarDato(ListaDobleAS *L, const char identiAS [MAX], const char nombAS [MAX], const char puesAS [MAX], const char funciAS [MAX], const char fechaIniAS [MAX])
+{
+	if(L->inicio == NULL) 
+	{
+	
+		L->inicio = crearNodo(identiAS, nombAS, puesAS, funciAS, fechaIniAS);
+		L->final = L->inicio;
+		L->tamanoAS++;
+		return;
+	}
+	L->final->siguiente = crearNodo(identiAS, nombAS, puesAS, funciAS, fechaIniAS);
+	L->final->siguiente->anterior = L->final;
+	L->final = L->final->siguiente;
+	L->tamanoAS++;
+}
+
+//Funcion para msotrar una lista doble
+void mostrarLista(const ListaDobleAS *L)
+{
+	NodoAS *i;
+	for(i = L->inicio; i!= NULL; i = i->siguiente){
+		printf("id_Ayudante: %s |Nombre: %s |Puesto: %s |Funciones: %s |Fecha de inicio laboral: %s\n", i->identificacionAS, i->nombreAS, i->puestoAS, i->funcionesAS, i->fechaInicioAS);
+	}
+	printf("\n\n");
+}
+
+//Funcion para liberar una lista doble
+void liberarLista(ListaDobleAS *L)
+{
+	NodoAS *n, *aux;
+	if(L->inicio == NULL)
+		return;
+	if(L->inicio->siguiente == NULL)
+		return;		
+	n = L->inicio;
+	
+	while(n != NULL)
+	{
+		aux = n;
+		n = n->siguiente;
+		free(aux);
+	}
+	
+}
+
+void corregirID (char idAS [MAX], const ListaDobleAS *L){
+	NodoAS *auxiliar;
+	int contador = 1;
+	
+	for (auxiliar = L->inicio; auxiliar != NULL ;  auxiliar =auxiliar->siguiente){
+		
+		if ( strcmp (auxiliar->identificacionAS, idAS) == 0 ){
+			contador++;
+			idAS[3] = contador + '0';
+			printf("\nEl contador va por %d", contador);
+			printf("\nEl nuevo id es: %s", idAS);
+			
+		}
+		else {
+			contador++;
+			printf("\nEl contador va por %d", contador);
+		}
+	}
+	free(auxiliar);
+}
+
+//Funcion para agregar Ayudantes de santa 
+ListaDobleAS *agregarAyudantes (ListaDobleAS *LD){
+	
+	char ideAS [MAX];
+	char nomBAS [MAX];
+	char puesTAS [MAX];
+	char funcIAS [MAX];
+	char fechaInAS [MAX];
+	int puesto;
+	int dia;
+	int mes;
+	int anio;
+	int tamano = LD->tamanoAS;
+	
+	char text[] = "AS- ";
+	
+	ListaDobleAS *ListaA;
+	//ListaA = cargarRequerimientos ();
+	//int tamano = tamanoListaReque (ListaR);
+	tamano = tamano+1;
+	
+    text[3] = tamano + '0';
+    strcpy (ideAS, text);
+	
+	corregirID(ideAS, LD);
+	
+	
+	char palabra [MAX];
+
+	printf ("-------- Ingrese los datos del ayudante de Santa -------- \n");
+	
+	printf("\nIngrese el nombre del ayudante\n: ");
+	scanf("%s", nomBAS);
+
+	printf("\nLos puestos de ayudantes son: 1. Supervisor 2. Ayudante de bodega 3. Mantenimiento 4. Control de calidad 5. Disenador\n");
+	printf("Seleccione el numero de puesto que corresponda en las opciones previas: ");
+	scanf("%d", &puesto);
+
+	if(puesto != 1 && puesto != 2 && puesto != 3 && puesto != 4 && puesto != 5){
+		printf("Debe ingresar un codigo de puesto valido");
+		return;
+	}
+	if (puesto == 1 ){
+		strcpy(puesTAS, "Supervisor");
+	}
+	if (puesto == 2){
+		strcpy(puesTAS, "Ayudante_Bodega");
+	}
+	if (puesto == 3){
+		strcpy(puesTAS, "Mantenimiento");
+	}
+	if (puesto == 4){
+		strcpy(puesTAS, "Control_Calidad");
+	}
+	if (puesto == 5){
+		strcpy(puesTAS, "Disenador");
+	}
+	
+	printf("Ingrese las funciones del puesto\n: ");
+	scanf("%s", funcIAS);
+	
+	printf("Ingrese la fecha en que ingreso a laborar con Santa\n: ");
+	scanf ("%s",fechaInAS);
+	
+	insertarDato (LD, ideAS, nomBAS, puesTAS, funcIAS, fechaInAS );
+	return LD;
+}
+
+//Funcion para determinar la validez de un ID
+int esIdValido (ListaDobleAS *L, const char id [MAX]){
+	NodoAS *auxiliar;
+	
+	for (auxiliar = L->inicio; auxiliar != NULL; auxiliar = auxiliar->siguiente){
+		if (  strcmp (auxiliar->identificacionAS, id) == 0){
+			return 1;
+		}
+	}
+	free(auxiliar);
+	return 0;
+}
+
+//Funcion para modificar datos de un ayudante 
+void modificarAyudante (ListaDobleAS *L)
+{
+	NodoAS *auxiliar;
+	char idModificar [MAX];
+	int puesto;
+	
+	printf("Ingrese la identificacion del ayudante de Santa: ");
+	scanf("%s", idModificar);
+	
+	
+	
+	if ( esIdValido (L, idModificar) == 0 ){
+		printf("Debe ingresar una identificacion valida");
+		return;
+	}
+	
+	for (auxiliar = L->inicio; auxiliar!= NULL; auxiliar = auxiliar->siguiente){
+		if( strcmp(auxiliar->identificacionAS, idModificar) == 0 ){
+			printf("\nLos puestos de ayudantes son: 1. Supervisor 2. Ayudante de bodega 3. Mantenimiento 4. Control de calidad 5. Disenador\n");
+			printf("Seleccione el numero de puesto que corresponda en las opciones previas: ");
+			scanf("%d", &puesto);
+	
+			if(puesto != 1 && puesto != 2 && puesto != 3 && puesto != 4 && puesto != 5){
+				printf("Debe ingresar un codigo de puesto valido");
+				return;
+			}
+			if (puesto == 1 ){
+				strcpy(auxiliar->puestoAS, "Supervisor");
+			}
+			if (puesto == 2){
+				strcpy(auxiliar->puestoAS, "Ayudante_Bodega");
+			}
+			if (puesto == 3){
+				strcpy(auxiliar->puestoAS, "Mantenimiento");
+			}
+			if (puesto == 4){
+				strcpy(auxiliar->puestoAS, "Control_Calidad");
+			}		
+			if (puesto == 5){
+				strcpy(auxiliar->puestoAS, "Disenador");
+			}
+	
+			printf("Ingrese las funciones del puesto\n: ");
+			scanf("%s", auxiliar->funcionesAS);
+			}
+	}
+	free(auxiliar);
+}
+
+void eliminarAyudante (ListaDobleAS *L){
+	
+	NodoAS *aux = L->inicio;
+	char idEliminar [MAX];
+	
+	//Valida si la lista esta vacia
+	if(L->inicio == NULL)
+	{
+		printf("La lista esta vacia...\n");	
+		return;	
+	}
+	else
+	{
+		printf("Ingrese la identificacion del ayudante de Santa: ");
+		scanf("%s", idEliminar);
+	
+		if ( esIdValido (L, idEliminar) == 0 ){
+			printf("Debe ingresar una identificacion valida");
+			return;
+		}
+		
+//Si el nodo a eliminar esta al inicio de la lista
+		if(strcmp(L->inicio->identificacionAS, idEliminar ) == 0) {
+		aux = L->inicio;
+		printf("El ayudante con identificacion %s ha sido eliminado \n", aux->identificacionAS);
+		
+		if(L->inicio == L->final) //Verifica si la lista solo ten?a un nodo para actualizar el puntero final
+		{
+			L->inicio = NULL;
+			L->final = NULL;
+		}
+		else{
+			L->inicio = L->inicio->siguiente;
+			L->inicio->anterior = NULL;	
+		}		
+		free(aux);
+
+		}
+	//-----------------------------	
+		else 
+		{
+			while(aux != NULL)
+			{
+				if( strcmp(aux->identificacionAS, idEliminar ) == 0) {
+					aux->anterior->siguiente = aux->siguiente;
+					if(aux != L->final)
+						aux->siguiente->anterior = aux->anterior;
+					else if(aux == L->final) //Valida si era el ultimo nodo de la lista para actualizar el puntero final
+						L->final = L->final->anterior;					
+					break;
+				}
+				aux = aux->siguiente;					
+			}
+			
+		if(aux != NULL)
+		{
+			printf("El ayudante con identificacion %s ha sido eliminado \n", aux->identificacionAS);
+			free(aux);
+		}
+	}
+}
+}
+
+//Funcion para cargar datos de ayudantes
+ListaDobleAS *cargarAyudantes (){
+	
+	ListaDobleAS *La;
+	La = listaNueva ();
+	char archivo[] = "ListaAyudantesSanta.txt";
+	char linea[BIG];
+	char delimitador [3] = "\t";
+	
+	char idAS [MAX];
+	char nomAS [MAX];
+	char pueAS [MAX];
+	char funAS [MAX];
+	char fecIAS [MAX];
+	
+	
+	FILE *punteroArchivoC;
+	char *token;
+
+	punteroArchivoC = fopen(archivo, "r+"); // read mode
+
+
+	while (feof(punteroArchivoC) == 0) {
+		//printf("Primer while");
+		fgets(linea,MAX,punteroArchivoC);
+		//printf("%s\n\n", linea);
+		
+   		token = strtok(linea, delimitador);
+		int contador = 0;
+   		while( token != NULL ) {
+   			//printf("Segundo while");
+   			//printf("El valor de contador es: %d\n\n", contador);
+   			
+   			if (contador == 0){
+   				//printf("Este es el primer if");
+   				//printf("Este es el token: %s", token);
+				strcpy(idAS,token);
+				//printf("%d\n", cedula);
+				}
+				
+			if (contador == 1){
+				strcpy(nomAS,token);
+				//printf("%s\n",nombre);
+				}
+			if (contador == 2){
+				strcpy(pueAS,token);
+				//printf("%s\n",correo);
+				}
+			if (contador == 3){
+				strcpy(funAS,token);
+				//printf("%d\n",acceso);
+				}
+			if (contador == 4){
+				strcpy(fecIAS,token);
+				//printf("%d\n",tel);
+				}
+   			contador++;	
+    		token = strtok(NULL, delimitador);
+   	}
+   	
+	   insertarDato (La,idAS,nomAS,pueAS,funAS, fecIAS);	
+	}
+
+    fclose(punteroArchivoC);
+    
+	free(token);
+	
+	return La;
+}
+
+//Funcion que escribe en un .txt los datos de los ayudantes
+void escribirAyudantes (ListaDobleAS *L){
+	
+	NodoAS *auxiliar;
+	char archivo[] = "ListaAyudantesSanta.txt";
+	char palabra [MAX];
+	int contador = 0;
+	FILE *punteroArchivo;
+	
+	punteroArchivo = fopen(archivo, "w"); // read mode
+	
+	for (auxiliar = L->inicio; auxiliar != NULL ; auxiliar = auxiliar->siguiente){
+		if (contador == 0){
+			fprintf(punteroArchivo,"%s\t",auxiliar->identificacionAS);
+			fprintf(punteroArchivo,"%s\t",auxiliar->nombreAS);
+			fprintf(punteroArchivo,"%s\t",auxiliar->puestoAS);
+			fprintf(punteroArchivo,"%s\t",auxiliar->funcionesAS);
+			fprintf(punteroArchivo,"%s\t",auxiliar->fechaInicioAS);
+		}
+		else{
+			fprintf(punteroArchivo,"\n%s\t",auxiliar->identificacionAS);
+			fprintf(punteroArchivo,"%s\t",auxiliar->nombreAS);
+			fprintf(punteroArchivo,"%s\t",auxiliar->puestoAS);
+			fprintf(punteroArchivo,"%s\t",auxiliar->funcionesAS);
+			fprintf(punteroArchivo,"%s\t",auxiliar->fechaInicioAS);	
+		}
+		contador ++;
+	}
+	fclose(punteroArchivo);
+	free(auxiliar);
+	free(punteroArchivo);
+	}
 
 
 //                                       PRINCIPAL
@@ -618,7 +1048,8 @@ int main(void)
 }
 	
 int menu(ListaR *L,ListaC *C,struct node* root){
-	
+	ListaDobleAS *Lista;
+	Lista = cargarAyudantes ();
 
 	
 	int cantidad_Juguetes = 0;
@@ -735,9 +1166,37 @@ int menu(ListaR *L,ListaC *C,struct node* root){
 				return menu(L,C,root);;
     }
 
-//                             ACA VA LO DE AYUDANTE DE SANTA
-//                             ACA VA LO DE AYUDANTE DE SANTA
-//                             ACA VA LO DE AYUDANTE DE SANTA
+//	--------------------------------------Registrar a un ayudante de santa------------------------------------- 
+	if (strcmp(opcion,"5")==0){
+		Lista = agregarAyudantes (Lista);
+		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+    }
+    
+  //	--------------------------------------Modificar los datos de un ayudante de santa------------------------------------- 
+	if (strcmp(opcion,"6")==0){
+		modificarAyudante(Lista);
+		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+    }  
+  
+//	--------------------------------------Eliminar a un ayudante de Santa------------------------------------- 
+	if (strcmp(opcion,"7")==0){
+		eliminarAyudante(Lista);
+		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+    }
+    
+//	--------------------------------------Mostrar registros de los ayudantes de Santa------------------------------------- 
+	if (strcmp(opcion,"8")==0){
+		mostrarLista (Lista);
+		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+    }   
 
 
 //--------------------------------------Agregar juguetes al arbol-------------------------------------   
@@ -885,6 +1344,7 @@ int menu(ListaR *L,ListaC *C,struct node* root){
 				return menu(L,C,root);
 
     }
-
+	escribirAyudantes (Lista);
+	liberarLista (Lista);
         return 0;
 }
