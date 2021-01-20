@@ -1026,6 +1026,309 @@ void escribirAyudantes (ListaDobleAS *L){
 	free(punteroArchivo);
 	}
 
+//                                       TODO SOBRE CATALOGO DE DOMICILIOS
+//-----------------------------------------------------------------------------------------------------------------
+
+//Métodos del grafo Catálogos para lugares de domicilio 
+
+void ingresarVertice(){
+    Vertice* aux;
+	Vertice* nuevo=(Vertice*)malloc(sizeof(Vertice));
+	//fflush(stdin);
+	printf("Ingrese el codigo del lugar: ");
+	scanf("%s",nuevo->idVertice);
+	printf("Ingrese el nombre del lugar ");
+	scanf("%s",nuevo->nombreLugar);
+	printf("Ingrese el codigo postal: ");
+	scanf("%d",&nuevo->codPostal);
+	printf("\n");
+	
+	nuevo->sig=NULL;
+    nuevo->ady=NULL;
+    nuevo->visitado=nuevo->terminado=0;
+    nuevo->monto=-1;
+    strcpy(nuevo->anterior,"");
+    if(inicio==NULL){
+        inicio=nuevo;
+    }else{
+        aux=inicio;
+        while(aux->sig!=NULL){
+            aux=aux->sig;
+        }
+        aux->sig=nuevo;
+      }
+ 
+ }
+
+void agregarArista (Vertice* aux, Vertice* aux2, Arista* nuevo){
+    Arista* a;
+    if(aux->ady==NULL){   
+	    aux->ady=nuevo;
+        nuevo->vrt=aux2;
+    }else{   
+	    a=aux->ady;
+        while(a->sig!=NULL)
+            a=a->sig;
+        nuevo->vrt=aux2;
+        a->sig=nuevo;
+    }
+}
+
+void ingresarArista(){
+   
+    char ini[LONG], fin[LONG];
+    int opcion;
+    
+    Arista* nuevo=(Arista*)malloc(sizeof(Arista));
+    nuevo->sig=NULL;
+    Vertice* auxiliar;
+	Vertice* auxiliar2;
+	
+    if(inicio==NULL){
+         printf("Error: El grafo está vacio\n");
+         return;
+    }
+    
+    //fflush(stdin);
+    printf("Ingresar lugar de origen:");
+    scanf("%s",ini);
+    printf("Ingresar lugar de destino:");
+    scanf("%s",fin);
+    printf("Ingresar tiempo del camino:");
+    scanf("%d",&nuevo->tiempo);
+    printf("Ingresar distancia del camino:");
+    scanf("%d",&nuevo->distancia);
+    printf("Los tipos de rutas disponibles son: 1.Terrestre, 2.Maritima y 3.Aerea\n");
+    printf("Indique el numero de ruta a escoger:");
+    scanf("%d",&opcion);
+	
+	if (opcion == 1){
+		strcpy(nuevo->tipoRuta, "Terrestre");
+	}
+	else if (opcion == 2){
+		strcpy(nuevo->tipoRuta, "Maritima");
+	}
+	else if (opcion == 3){
+		strcpy(nuevo->tipoRuta, "Aerea");
+	}
+	else{
+		printf("Debe ingresar el codigo correcto");
+		return;
+	}
+	
+    auxiliar = inicio;
+    auxiliar2 = inicio;
+    while(auxiliar2 != NULL){
+        if(strcmp(auxiliar2->nombreLugar,fin)==0){
+            break;
+        }
+        auxiliar2 = auxiliar2->sig;
+    }
+    if(auxiliar2 == NULL){
+    	printf("Error:lugar no encontrado\n");
+    	return;
+	}
+    while(auxiliar!=NULL){
+        if(strcmp(auxiliar->nombreLugar,ini)==0){
+            agregarArista(auxiliar,auxiliar2,nuevo);
+            return;
+        }
+        auxiliar = auxiliar->sig;
+    }
+    if(auxiliar == NULL)
+    	printf("Error:lugar no encontrado\n");
+}
+
+void visualizarGrafo(){
+    Vertice* aux=inicio;
+    Arista* ar;
+    printf("Vertices\n");
+    while(aux!=NULL){   
+	    printf("%s:    ",aux->nombreLugar);
+        if(aux->ady!=NULL){
+            ar=aux->ady;
+            while(ar!=NULL){ 
+			    printf(" %s %d %d",ar->vrt->nombreLugar,ar->tiempo,ar->distancia);
+                ar=ar->sig;
+            }
+        }
+        printf("\n");
+        aux=aux->sig;
+    }
+    printf("\n");
+}
+
+void insertarPila(Vertice* aux){
+	Lista* nuevo=(Lista*)malloc(sizeof(Lista));
+	nuevo->lugar =aux;
+	nuevo->sig=NULL;
+	if(ini==NULL){
+		ini=nuevo;
+		final=nuevo;
+		
+	}else{
+	   nuevo->sig=ini;
+	   ini=nuevo;    	
+	}
+}
+
+Vertice* desencolar(){
+	Lista* aux;
+	if(ini==NULL){
+		return NULL;
+	}else{
+		aux=ini;
+		ini=ini->sig;
+		aux->sig=NULL;
+		if(ini==NULL)
+		final=NULL;
+	}
+	Vertice* resultado=aux->lugar;
+	free(aux);
+	return resultado;
+}
+
+void reiniciar(){
+	if(inicio!=NULL){
+		Vertice* aux=inicio;
+		while(aux!=NULL){
+			aux->visitado=aux->terminado=0;
+		    aux->monto=-1;
+		    strcpy(aux->anterior,"");
+		    aux=aux->sig;
+		}
+	}
+}
+
+
+void eliminarArista(){
+	char ini[LONG],fin[LONG];
+	printf("ingrese el lugar de origen: ");
+	scanf("%s" ,ini);
+	printf("ingre el lugar destino: ");
+	scanf("%s",fin);
+	   
+    Arista* a,* eliminar;
+    Vertice* aux;
+	Vertice* aux2;
+    //fflush(stdin);
+    aux=inicio;
+    
+    
+	while(aux!=NULL){
+		if(strcmp(aux->nombreLugar,ini)==0){
+			eliminar=aux->ady;
+			int num = 0;
+			
+			while(eliminar!=NULL){
+				if(num==0){
+					if(strcmp(eliminar->vrt->nombreLugar, fin)==0){
+						aux->ady=eliminar->sig;
+						free(eliminar);
+						printf("Camino eliminado\n");
+						return;
+					}
+					
+				}
+				if(strcmp(eliminar->vrt->nombreLugar,fin)==0){
+					a->sig=eliminar->sig;
+					free(eliminar);
+					printf("Camino eliminado\n");
+					return;
+					}
+				num++;
+				a=eliminar;
+				eliminar=eliminar->sig;
+			}
+			
+		}
+		aux=aux->sig;
+	}
+	printf("camino no encontrado\n");
+	return;
+    
+}
+
+
+void eliminarAristaLugar(char ini[LONG],char fin[LONG]){   
+    Arista* a,* eliminar;
+    Vertice* aux;
+	Vertice* aux2;
+    //fflush(stdin);
+    aux=inicio;
+	while(aux!=NULL){
+		if(strcmp(aux->nombreLugar,ini)==0){
+			eliminar=aux->ady;
+			int num;
+			while(eliminar!=NULL){
+				if(num==0){
+					if(strcmp(eliminar->vrt->nombreLugar,fin)==0){
+						aux->ady=eliminar->sig;
+						free(eliminar);
+						printf("Camino eliminado\n");
+						return;
+					}
+				}
+				if(strcmp(eliminar->vrt->nombreLugar,fin)==0){
+					a->sig=eliminar->sig;
+					free(eliminar);
+					printf("Camino eliminado\n");
+					return;
+					}
+				num++;
+				a=eliminar;
+				eliminar=eliminar->sig;
+			}
+			
+		}
+		aux=aux->sig;
+	}
+	printf("camino no encontrado\n");
+	return;
+    
+}
+
+
+void eliminarVertice(){
+	Vertice* actual,* anterior;
+	Arista* aux;
+	actual=inicio;
+	char final[LONG];
+	//fflush(stdin);
+	printf("que lugar desea eliminar: ");
+	scanf("%s",final);
+	while (actual!=NULL){
+		aux=actual->ady;
+		while(aux!=NULL){
+			if(strcmp(aux->vrt->nombreLugar,final)==0){
+				eliminarAristaLugar(actual->nombreLugar, aux->vrt->nombreLugar);
+				break;
+			}
+			aux=aux->sig;
+		}
+		actual=actual->sig;
+	}
+	
+	actual=inicio;
+	if(strcmp(actual->nombreLugar,final)==0){
+		inicio=actual->sig;
+		free(actual);
+	}else{
+		int info;
+		info=strcmp(actual->nombreLugar,final);
+		while(info!=0){
+			anterior=actual;
+			actual=actual->sig;
+			info=strcmp(actual->nombreLugar,final);
+		}
+		anterior->sig=actual->sig;
+		free(actual);
+	}
+}
+
+//FINAL GRAFO
+
+
 
 //                                       PRINCIPAL
 //-----------------------------------------------------------------------------------------------------------------
@@ -1050,7 +1353,10 @@ int main(void)
 int menu(ListaR *L,ListaC *C,struct node* root){
 	ListaDobleAS *Lista;
 	Lista = cargarAyudantes ();
-
+	
+	Vertice* inicio=NULL;
+	Lista* ini=NULL;
+	Lista* final=NULL; 
 	
 	int cantidad_Juguetes = 0;
 	
@@ -1077,6 +1383,13 @@ int menu(ListaR *L,ListaC *C,struct node* root){
 	printf("13. Registro de comportamientos\n");
 	printf("14. Mostrar registros de comportamientos \n\n");
 	
+	printf("15. Agregar un lugar\n");
+	printf("16. Agregar una ruta \n");
+	printf("17. Eliminar un lugar \n");
+	printf("18. Eliminar una ruta \n");
+	printf("19. Modificar un lugar \n");
+	printf("20. Modificar una ruta \n");
+	printf("21. Mostrar catalogo de domicilios \n");
 	
 	gets(opcion);	
 	
@@ -1344,6 +1657,74 @@ int menu(ListaR *L,ListaC *C,struct node* root){
 				return menu(L,C,root);
 
     }
+    
+ //--------------------------------------Agregar un lugar------------------------------------- 	
+  	if (strcmp(opcion,"15")==0){
+        printf("Ingrese la cantidad de lugares a registrar: ");
+	scanf("%d", &cantidad);
+	
+	for (indice = 0; indice!=cantidad; indice++ ){
+		ingresarVertice ();
+	}
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+
+    }
+    
+ //--------------------------------------Agregar una ruta------------------------------------- 	
+  	if (strcmp(opcion,"16")==0){
+        ingresarArista ();
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+
+    }
+ //--------------------------------------Eliminar un lugar------------------------------------- 	
+  	if (strcmp(opcion,"17")==0){
+        eliminarVertice ();
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+
+    }
+ 
+ //--------------------------------------Eliminar una ruta------------------------------------- 	
+  	if (strcmp(opcion,"18")==0){
+        eliminarArista ();
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+
+    }
+    
+  //--------------------------------------Modificar un lugar------------------------------------- 	
+  	if (strcmp(opcion,"19")==0){
+        //funcion
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+
+    } 
+  
+  //--------------------------------------Modificar una ruta------------------------------------- 	
+  	if (strcmp(opcion,"20")==0){
+        //funcion
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+
+    } 
+    
+  //--------------------------------------Mostrar catalogo de domicilios------------------------------------- 	
+  	if (strcmp(opcion,"21")==0){
+        		visualizarGrafo ();
+           		printf("\nPresione ENTER para continuar.\n"); 
+				getch();
+				return menu(L,C,root);
+
+    }  
+    
 	escribirAyudantes (Lista);
 	liberarLista (Lista);
         return 0;
