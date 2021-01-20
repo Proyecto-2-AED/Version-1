@@ -4,6 +4,12 @@
 #include <string.h>  //manipulacion de strings
 #include <time.h> //manejo de tiempos
 
+//------------------------CONSTANTES-----------------------------
+
+#define LONG 40
+#define MAX 200
+#define BIG 2000
+
 //-----------------------ESTRUCTURAS------------------------------
 //---------REGISTRO NIÑ@------------------
 
